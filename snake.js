@@ -164,7 +164,7 @@ class SnakeGame {
     this.resetGame();
     this.state = GAME_STATE.READY; // Ensure state is set correctly
     this.updateHighScoreDisplay();
-    this.showOverlay('Ready to Play!', 'Press any key, touch the screen, or use the buttons to start');
+    this.showOverlay('Ready to Play!', 'Press any key or press Start');
   }
   
   setupEventListeners() {
