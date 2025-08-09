@@ -180,6 +180,7 @@ class SnakeGame {
     // Game control buttons
     this.pauseBtn.addEventListener('click', () => this.togglePause());
     this.newGameBtn.addEventListener('click', () => this.startNewGame());
+    document.getElementById('start-btn').addEventListener('click', () => this.startGame());
     document.getElementById('resume-btn').addEventListener('click', () => this.resumeGame());
     document.getElementById('restart-btn').addEventListener('click', () => this.startNewGame());
 
@@ -551,16 +552,20 @@ class SnakeGame {
     const resumeBtn = document.getElementById('resume-btn');
     const restartBtn = document.getElementById('restart-btn');
     
+    const startBtn = document.getElementById('start-btn');
     if (this.state === GAME_STATE.READY) {
-      // Hide buttons on initial ready state
+      // Show Start only on initial ready state
+      startBtn.style.display = 'inline-block';
       resumeBtn.style.display = 'none';
       restartBtn.style.display = 'none';
     } else if (this.state === GAME_STATE.PAUSED) {
       // Show resume button when paused
+      startBtn.style.display = 'none';
       resumeBtn.style.display = 'inline-block';
       restartBtn.style.display = 'inline-block';
     } else if (this.state === GAME_STATE.GAME_OVER) {
       // Hide resume, show restart on game over
+      startBtn.style.display = 'none';
       resumeBtn.style.display = 'none';
       restartBtn.style.display = 'inline-block';
       restartBtn.textContent = 'Play Again';
