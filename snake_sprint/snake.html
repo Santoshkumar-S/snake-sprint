@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Serpent Sprint</title>
+<link rel="stylesheet" href="snake.css">
+</head>
+<body>
+
+<h1>Serpent Sprint</h1>
+<div id="game-info">
+  <div id="score">Score: 0</div>
+  <div id="level">Level: 1</div>
+  <div id="speed">Speed: 1x</div>
+  <div id="high-score" class="hidden">High Score: 0</div>
+</div>
+
+<div id="game-container">
+  <canvas id="game" width="600" height="600"></canvas>
+  <div id="game-overlay" class="hidden">
+    <div id="overlay-content">
+      <h2 id="overlay-title">Game Paused</h2>
+      <p id="overlay-message">Press SPACE to resume</p>
+      <div id="overlay-buttons">
+        <button class="btn btn-primary" id="resume-btn">Resume</button>
+        <button class="btn btn-secondary" id="restart-btn">Restart</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="game-controls">
+  <button class="btn btn-primary" id="pause-btn">Pause</button>
+  <button class="btn btn-secondary" id="new-game-btn">New Game</button>
+  <button class="btn btn-secondary" id="mute-btn" aria-pressed="false">Sound: On</button>
+</div>
+
+<!-- Touch Controls for mobile -->
+<div id="controls">
+  <button class="btn btn-control" id="up">▲</button>
+  <button class="btn btn-control" id="left">◄</button>
+  <button class="btn btn-control" id="down">▼</button>
+  <button class="btn btn-control" id="right">►</button>
+</div>
+
+<div id="instructions">
+  <p><strong>Controls:</strong> Arrow Keys, WASD, Touch Buttons, or Swipe</p>
+  <p><strong>Start:</strong> Press any key or touch the screen</p>
+  <p><strong>Pause:</strong> SPACE or Pause button</p>
+</div>
+
+<script src="snake.js"></script>
+</body>
+</html>
