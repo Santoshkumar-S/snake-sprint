@@ -1,7 +1,8 @@
 // Game Configuration
 const CONFIG = {
   GRID_SIZE: 20,
-  INITIAL_SPEED: 150,
+  // Slower starting speed for level one based on user feedback
+  INITIAL_SPEED: 220,
   SPEED_INCREASE: 10,
   POINTS_PER_LEVEL: 5,
   MIN_SPEED: 50,
@@ -367,6 +368,7 @@ class SnakeGame {
   }
   
   resetGame() {
+    // Start with a single square; visual length becomes 3 with head protrusion and tail triangle
     this.snake = [{ x: 10, y: 10 }];
     this.velocity = { x: 0, y: 0 };
     this.food = this.generateFood();
@@ -421,7 +423,6 @@ class SnakeGame {
       this.sound.playEat();
       this.checkLevelUp();
       this.updateUI();
-      
       // Add pulse effect to score
       this.scoreEl.classList.add('pulse');
       setTimeout(() => this.scoreEl.classList.remove('pulse'), 300);
@@ -467,26 +468,74 @@ class SnakeGame {
     );
     this.ctx.fill();
     
-    // Draw snake
+    // Draw snake as squares (head highlighted) — no head protrusion
     this.snake.forEach((segment, i) => {
+      const size = CONFIG.GRID_SIZE;
+      const x = segment.x * size;
+      const y = segment.y * size;
       this.ctx.fillStyle = i === 0 ? '#4caf50' : '#81c784';
-      this.ctx.fillRect(
-        segment.x * CONFIG.GRID_SIZE,
-        segment.y * CONFIG.GRID_SIZE,
-        CONFIG.GRID_SIZE,
-        CONFIG.GRID_SIZE
-      );
-      
-      // Add highlight
+      this.ctx.fillRect(x, y, size, size);
       this.ctx.strokeStyle = '#2e7d32';
       this.ctx.lineWidth = 1;
-      this.ctx.strokeRect(
-        segment.x * CONFIG.GRID_SIZE + 1,
-        segment.y * CONFIG.GRID_SIZE + 1,
-        CONFIG.GRID_SIZE - 2,
-        CONFIG.GRID_SIZE - 2
-      );
+      this.ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
     });
+
+    // Draw tail triangle (aesthetic tail tip) with full-width base; appears even for length 1
+    {
+      const size = CONFIG.GRID_SIZE;
+      const tailIndex = this.snake.length - 1;
+      const tail = this.snake[tailIndex];
+      const tx = tail.x * size;
+      const ty = tail.y * size;
+
+      // Determine outward direction for tail tip
+      let dirX = 0;
+      let dirY = 0;
+      if (this.snake.length >= 2) {
+        const prev = this.snake[tailIndex - 1];
+        dirX = Math.sign(tail.x - prev.x);
+        dirY = Math.sign(tail.y - prev.y);
+      } else {
+        // Single segment: point tail opposite movement; default LEFT if stationary
+        if (this.velocity.x !== 0 || this.velocity.y !== 0) {
+          dirX = -Math.sign(this.velocity.x);
+          dirY = -Math.sign(this.velocity.y);
+        } else {
+          dirX = -1; dirY = 0;
+        }
+      }
+
+      const tipOut = size; // extend tail triangle length to match square width
+
+      this.ctx.beginPath();
+      if (dirX === 1 && dirY === 0) {
+        // Base is right edge of tail square; point further right
+        this.ctx.moveTo(tx + size + tipOut, ty + size / 2); // apex
+        this.ctx.lineTo(tx + size, ty);                     // top-right corner
+        this.ctx.lineTo(tx + size, ty + size);              // bottom-right corner
+      } else if (dirX === -1 && dirY === 0) {
+        // Base is left edge; point further left
+        this.ctx.moveTo(tx - tipOut, ty + size / 2);        // apex
+        this.ctx.lineTo(tx, ty + size);                     // bottom-left corner
+        this.ctx.lineTo(tx, ty);                            // top-left corner
+      } else if (dirX === 0 && dirY === -1) {
+        // Base is top edge; point further up
+        this.ctx.moveTo(tx + size / 2, ty - tipOut);        // apex
+        this.ctx.lineTo(tx + size, ty);                     // top-right corner
+        this.ctx.lineTo(tx, ty);                            // top-left corner
+      } else {
+        // Base is bottom edge; point further down
+        this.ctx.moveTo(tx + size / 2, ty + size + tipOut); // apex
+        this.ctx.lineTo(tx, ty + size);                     // bottom-left corner
+        this.ctx.lineTo(tx + size, ty + size);              // bottom-right corner
+      }
+      this.ctx.closePath();
+      this.ctx.fillStyle = '#81c784';
+      this.ctx.fill();
+      this.ctx.strokeStyle = '#2e7d32';
+      this.ctx.lineWidth = 1;
+      this.ctx.stroke();
+    }
   }
   
   gameOver() {
